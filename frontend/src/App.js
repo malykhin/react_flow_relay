@@ -1,6 +1,9 @@
-import "./App.css";
+// @flow
 
-function App() {
+import "./App.css";
+import React from "React";
+
+function App(): any {
   return (
     <div className="App">
       <header># To Do</header>
