@@ -1,7 +1,6 @@
 // @flow
 
 import "./App.css";
-import React from "React";
 
 function App(): any {
   return (
