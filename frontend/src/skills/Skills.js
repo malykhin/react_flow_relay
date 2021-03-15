@@ -20,6 +20,9 @@ type fieldsType = {
 };
 
 type dataType = {
+  frontEnd: {
+    ...fieldsType
+  },
   backEnd: {
     ...fieldsType
   }
@@ -28,5 +31,10 @@ type dataType = {
 export default function Skills(): React$Element<any> {
   const { data, loading } = useQuery<dataType, Boolean>(GET_SKILLS);
   if (loading) return <h1>Loading...</h1>;
-  return <Section sectionData={data} dataKey="backEnd" />;
+  return (
+    <div className="flex-box">
+      <Section sectionData={data} dataKey="frontEnd" />
+      <Section sectionData={data} dataKey="backEnd" />
+    </div>
+  );
 }

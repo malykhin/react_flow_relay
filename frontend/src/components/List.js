@@ -1,6 +1,7 @@
 // @flow
 
 import React from "react";
+import './styles/common.css'
 
 type Props = {
   idField: string,
@@ -16,7 +17,7 @@ export default function List({
   listData
 }: Props): React$Element<any> {
   return (
-    <ul>
+    <ul className="list">
       {listData.map(data => {
         const id = nestedObjectName
           ? data[nestedObjectName][idField]

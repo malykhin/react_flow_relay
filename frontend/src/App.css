@@ -1,3 +1,11 @@
 .App {
   text-align: center;
 }
+
+.flex-box {
+  display: flex;
+}
+
+.flex-box>* {
+  margin: 0 1rem;
+}
