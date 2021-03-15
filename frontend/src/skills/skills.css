@@ -1,0 +1,7 @@
+.list-wrapper {
+    cursor: pointer;
+}
+
+.list-wrapper:hover {
+    background: lightblue;
+}
