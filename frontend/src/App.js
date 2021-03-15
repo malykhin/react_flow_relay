@@ -2,13 +2,13 @@
 
 import "./App.css";
 import React from "react";
-import ApolloClient from "apollo-boost";
-import { ApolloProvider } from "react-apollo";
-import BackEndList from "./skills/BackEndList";
+import { ApolloProvider, ApolloClient, InMemoryCache } from "@apollo/client";
+import Skills from "./skills/Skills";
 
 // apollo client setup
 const client = new ApolloClient({
-  uri: "http://localhost:4000/graphql"
+  uri: "http://localhost:4000/graphql",
+  cache: new InMemoryCache()
 });
 
 function App(): React$Element<any> {
@@ -16,7 +16,7 @@ function App(): React$Element<any> {
     <ApolloProvider client={client}>
       <div className="App">
         <header># To Do</header>
-        <BackEndList />
+        <Skills />
       </div>
     </ApolloProvider>
   );

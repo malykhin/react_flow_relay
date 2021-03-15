@@ -1,9 +1,10 @@
 // @flow
 
-import { gql } from "apollo-boost";
+import { gql } from "@apollo/client";
 
-const getBackEndSkills: Object = gql`
-  {
+
+const GET_SKILLS: Object = gql`
+  query GetSkills {
     backEnd {
       name
       skills {
@@ -18,4 +19,4 @@ const getBackEndSkills: Object = gql`
   }
 `;
 
-export { getBackEndSkills };
+export { GET_SKILLS };

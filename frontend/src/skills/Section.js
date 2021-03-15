@@ -1,33 +1,27 @@
-import React from "react";
+// @flow
 
-type listDataTypes = {
-  node: {
-    id: string,
-    name: string
-  }
+import React from "react";
+import List from "../components/List";
+
+type Props = {
+  dataKey: string,
+  sectionData: Object
 };
 
-interface Props {
-  loading: Boolean;
-  sectionData: {
-    name: String,
-    skills: {
-      edges: Array<listDataTypes>
-    }
-  };
-}
-
-export default function Section({ loading, sectionData }: Props) {
-  if (loading) return <h1>Loading....</h1>;
-  const { name, skills } = sectionData;
+export default function Section({
+  dataKey,
+  sectionData
+}: Props): React$Element<any> {
+  const { name, skills } = sectionData[dataKey];
   return (
     <div>
       <h1>{name}</h1>
-      <ul>
-        {skills.edges.map(({ node }) => (
-          <li key={node.id}>{node.name}</li>
-        ))}
-      </ul>
+      <List
+        listData={skills.edges}
+        idField="id"
+        nameField="name"
+        nestedObjectName="node"
+      />
     </div>
   );
 }
