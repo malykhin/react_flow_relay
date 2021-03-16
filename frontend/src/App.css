@@ -9,3 +9,7 @@
 .flex-box>* {
   margin: 0 1rem;
 }
+
+.align-center {
+  text-align: center;
+}
