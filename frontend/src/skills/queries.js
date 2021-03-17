@@ -1,7 +1,7 @@
 // @flow
 
 import { gql } from "@apollo/client";
-import { CORE_SKILL_FIELDS } from './fragments';
+import { CORE_SKILL_FIELDS } from "./fragments";
 
 const GET_SKILLS: Object = gql`
   query GetSkills {
@@ -14,4 +14,23 @@ const GET_SKILLS: Object = gql`
   }
 `;
 
-export { GET_SKILLS };
+const ADD_SKILL: Object = gql`
+  mutation AddSkill($areaId: ID!, $skillName: String!) {
+    introduceSkill(input: { areaId: $areaId, skillName: $skillName }) {
+      area {
+        id
+        name
+        skills {
+          edges {
+            node {
+              id
+              name
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export { GET_SKILLS, ADD_SKILL };

@@ -105,7 +105,8 @@ const skillMutation = mutationWithClientMutationId({
     },
   },
   mutateAndGetPayload: ({ skillName, areaId }) => {
-    const newSkill = createSkill(skillName, areaId);
+    const decodedAreaId = Buffer.from(areaId, 'base64').toString().split(':')[1];
+    const newSkill = createSkill(skillName, decodedAreaId);
     return {
       sillId: newSkill.id,
       areaId,

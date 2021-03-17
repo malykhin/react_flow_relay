@@ -17,18 +17,20 @@ import "./skills.css";
 type Props = {
   open: boolean,
   title: string,
-  closeListener: Function
+  closeListener: Function,
+  saveListener: Function
 };
 
 export default function AddSkillModal({
   open,
   title,
-  closeListener
+  closeListener,
+  saveListener
 }: Props): React$Element<any> {
   const { register, errors, handleSubmit, clearErrors } = useForm();
   const onSubmit = (data: Object, e: SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(data);
+    saveListener(data);
   };
   const cancelListener = () => {
     clearErrors();
