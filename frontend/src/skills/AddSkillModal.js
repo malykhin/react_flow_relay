@@ -10,7 +10,6 @@ import Divider from "@material-ui/core/Divider";
 import TextField from "@material-ui/core/TextField";
 import IconButton from "@material-ui/core/IconButton";
 import CloseIcon from "@material-ui/icons/Close";
-import Typography from "@material-ui/core/Typography";
 import { useForm } from "react-hook-form";
 import "./skills.css";
 
@@ -37,15 +36,11 @@ export default function AddSkillModal({
     closeListener();
   };
   return (
-    <Dialog fullWidth={true} maxWidth="sm" onClose={cancelListener} open={open}>
-      <DialogTitle>
-        <Typography align="center" variant="h6">
-          Add to {title}
-        </Typography>
-        <IconButton className="close-icon" onClick={cancelListener}>
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
+    <Dialog fullWidth={true} maxWidth="xs" onClose={cancelListener} open={open}>
+      <DialogTitle className="align-center">Add to {title}</DialogTitle>
+      <IconButton className="close-icon" onClick={cancelListener}>
+        <CloseIcon />
+      </IconButton>
       <Divider />
       <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete="off">
         <DialogContent>
@@ -60,12 +55,24 @@ export default function AddSkillModal({
             required
           />
         </DialogContent>
-        <DialogActions className="align-center">
-          <Button variant="contained" color="primary" onClick={cancelListener}>
+        <DialogActions className="flex-align-center">
+          <Button
+            variant="contained"
+            color="primary"
+            className="fix-width-button"
+            fullWidth={true}
+            onClick={cancelListener}
+          >
             Cancel
           </Button>
-          <Button variant="contained" color="primary" type="submit">
-            Submit
+          <Button
+            variant="contained"
+            color="primary"
+            className="fix-width-button"
+            fullWidth={true}
+            type="submit"
+          >
+            Add
           </Button>
         </DialogActions>
       </form>

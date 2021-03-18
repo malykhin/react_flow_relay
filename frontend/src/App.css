@@ -13,3 +13,11 @@
 .align-center {
   text-align: center;
 }
+
+.flex-align-center {
+  justify-content: center !important;
+}
+
+.fix-width-button {
+  max-width: 90px !important;
+}
