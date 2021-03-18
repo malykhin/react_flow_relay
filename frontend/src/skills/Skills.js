@@ -6,12 +6,15 @@ import { GET_SKILLS, ADD_SKILL } from "./queries";
 import Section from "./Section";
 import AddSkillModal from "./AddSkillModal";
 import { useReducer } from "react";
+import update from "immutability-helper";
+
+type keyValueType = {
+  id: string,
+  name: string
+};
 
 type nodeType = {
-  node: {
-    id: string,
-    name: string
-  }
+  node: keyValueType
 };
 
 type fieldsType = {
@@ -25,6 +28,17 @@ type fieldsType = {
 type dataType = {
   frontEnd: fieldsType,
   backEnd: fieldsType
+};
+
+type saveResponseType = {
+  data: {
+    introduceSkill: {
+      skill: keyValueType,
+      area: {
+        id: string
+      }
+    }
+  }
 };
 
 type stateType = {
@@ -52,6 +66,7 @@ const initialState = {
 const SET_DISPLAY_DATA = "set_display_data";
 const SHOW_MODAL = "show_modal";
 const CLOSE_MODAL = "close_modal";
+const ADD_SKILL_TO_AREA = "add_skill";
 
 function reducer(state: stateType, action: actionType) {
   switch (action.type) {
@@ -60,10 +75,16 @@ function reducer(state: stateType, action: actionType) {
       return { ...state, frontEnd: { ...frontEnd }, backEnd: { ...backEnd } };
     case SHOW_MODAL:
       const { areaId, name } = action.payload;
-      const newArea = { areaId, name };
-      return { ...state, modalOpen: true, area: newArea };
+      const showArea = { areaId, name };
+      return { ...state, modalOpen: true, area: showArea };
     case CLOSE_MODAL:
       return { ...state, modalOpen: false };
+    case ADD_SKILL_TO_AREA:
+      const { areaKey, newSkill } = action.payload;
+      const newArea: fieldsType = update(state[areaKey], {
+        skills: { edges: { $push: [{ node: { ...newSkill } }] } }
+      });
+      return { ...state, [areaKey]: newArea };
     default:
       return state;
   }
@@ -79,26 +100,34 @@ export default function Skills(): React$Element<any> {
   >(reducer, initialState);
 
   useEffect(() => {
-    if (!loading) {
+    if (data && data.frontEnd && data.backEnd) {
       dispatch({
         type: SET_DISPLAY_DATA,
         payload: { frontEnd: data.frontEnd, backEnd: data.backEnd }
       });
     }
-  }, [loading]);
+  }, [data]);
 
   const handleCloseModal = () => {
     dispatch({ type: CLOSE_MODAL });
   };
+
   const handleSave = async data => {
-    await addSkill({
-      variables: { areaId: area.areaId, skillName: data.skill },
-      refetchQueries: [{ query: GET_SKILLS }] // temporary
+    const response: saveResponseType = await addSkill({
+      variables: { areaId: area.areaId, skillName: data.skill }
+    });
+    const areaId = response.data.introduceSkill.area.id;
+    const updatedAreaKey = areaId === frontEnd.id ? "frontEnd" : "backEnd";
+    const newSkill = response.data.introduceSkill.skill;
+    dispatch({
+      type: ADD_SKILL_TO_AREA,
+      payload: { areaKey: updatedAreaKey, newSkill }
     });
     if (!newData.loading) {
       handleCloseModal();
     }
   };
+
   if (loading) return <h1>Loading...</h1>;
   return (
     <>

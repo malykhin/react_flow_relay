@@ -3,7 +3,7 @@ const {
   GraphQLNonNull,
   GraphQLObjectType,
   GraphQLSchema,
-  GraphQLString,
+  GraphQLString
 } = require("graphql");
 
 const {
@@ -13,7 +13,7 @@ const {
   connectionFromArray,
   connectionArgs,
   connectionDefinitions,
-  mutationWithClientMutationId,
+  mutationWithClientMutationId
 } = require("graphql-relay");
 
 const {
@@ -21,11 +21,13 @@ const {
   getSkill,
   getFrontEnd,
   getBackEnd,
-  createSkill,
+  createSkill
 } = require("../repository");
 
+const { decodeId } = require("../helpers");
+
 const { nodeInterface, nodeField } = nodeDefinitions(
-  (globalId) => {
+  globalId => {
     const { type, id } = fromGlobalId(globalId);
     switch (type) {
       case "Area":
@@ -34,7 +36,7 @@ const { nodeInterface, nodeField } = nodeDefinitions(
         return getSkill(id);
     }
   },
-  (obj) => (obj.skills ? areaType : skillType)
+  obj => (obj.skills ? areaType : skillType)
 );
 
 const skillType = new GraphQLObjectType({
@@ -43,13 +45,13 @@ const skillType = new GraphQLObjectType({
   fields: () => ({
     id: globalIdField(),
     name: {
-      type: GraphQLString,
-    },
-  }),
+      type: GraphQLString
+    }
+  })
 });
 
 const { connectionType: skillConnection } = connectionDefinitions({
-  nodeType: skillType,
+  nodeType: skillType
 });
 
 const areaType = new GraphQLObjectType({
@@ -58,15 +60,15 @@ const areaType = new GraphQLObjectType({
   fields: () => ({
     id: globalIdField(),
     name: {
-      type: GraphQLString,
+      type: GraphQLString
     },
     skills: {
       type: skillConnection,
       args: connectionArgs,
       resolve: (area, args) =>
-        connectionFromArray(area.skills.map(getSkill), args),
-    },
-  }),
+        connectionFromArray(area.skills.map(getSkill), args)
+    }
+  })
 });
 
 const queryType = new GraphQLObjectType({
@@ -74,54 +76,53 @@ const queryType = new GraphQLObjectType({
   fields: () => ({
     backEnd: {
       type: areaType,
-      resolve: () => getBackEnd(),
+      resolve: () => getBackEnd()
     },
     frontEnd: {
       type: areaType,
-      resolve: () => getFrontEnd(),
+      resolve: () => getFrontEnd()
     },
-    node: nodeField,
-  }),
+    node: nodeField
+  })
 });
 
 const skillMutation = mutationWithClientMutationId({
   name: "IntroduceSkill",
   inputFields: {
     skillName: {
-      type: new GraphQLNonNull(GraphQLString),
+      type: new GraphQLNonNull(GraphQLString)
     },
     areaId: {
-      type: new GraphQLNonNull(GraphQLID),
-    },
+      type: new GraphQLNonNull(GraphQLID)
+    }
   },
   outputFields: {
     skill: {
       type: skillType,
-      resolve: (payload) => getSkill(payload.skillId),
+      resolve: payload => getSkill(payload.skillId)
     },
     area: {
       type: areaType,
-      resolve: (payload) => getArea(payload.areaId),
-    },
+      resolve: payload => getArea(decodeId(payload.areaId))
+    }
   },
   mutateAndGetPayload: ({ skillName, areaId }) => {
-    const decodedAreaId = Buffer.from(areaId, 'base64').toString().split(':')[1];
-    const newSkill = createSkill(skillName, decodedAreaId);
+    const newSkill = createSkill(skillName, decodeId(areaId));
     return {
-      sillId: newSkill.id,
-      areaId,
+      skillId: newSkill.id,
+      areaId
     };
-  },
+  }
 });
 
 const mutationType = new GraphQLObjectType({
   name: "Mutation",
   fields: () => ({
-    introduceSkill: skillMutation,
-  }),
+    introduceSkill: skillMutation
+  })
 });
 
 module.exports = new GraphQLSchema({
   query: queryType,
-  mutation: mutationType,
+  mutation: mutationType
 });
