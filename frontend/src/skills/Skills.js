@@ -66,9 +66,9 @@ const initialState = {
 const SET_DISPLAY_DATA = "set_display_data";
 const SHOW_MODAL = "show_modal";
 const CLOSE_MODAL = "close_modal";
-const ADD_SKILL_TO_AREA = "add_skill";
+export const ADD_SKILL_TO_AREA = "add_skill";
 
-function reducer(state: stateType, action: actionType) {
+export function reducer(state: stateType, action: actionType): Object {
   switch (action.type) {
     case SET_DISPLAY_DATA:
       const { frontEnd, backEnd } = action.payload;

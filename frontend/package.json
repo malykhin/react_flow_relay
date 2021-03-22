@@ -23,7 +23,7 @@
     "flow": "flow",
     "start": "npm run relay && react-scripts start",
     "build": "npm run relay && react-scripts build",
-    "test": "npm run relay && react-scripts test",
+    "test": "npm run relay && react-scripts test --coverage",
     "eject": "react-scripts eject",
     "relay": "relay-compiler --schema ./schema.graphql --src ./src"
   },
