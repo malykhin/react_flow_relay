@@ -6,8 +6,8 @@
     background: lightblue;
 }
 
-.close-icon {
-    position: absolute !important;
+button.close-icon {
+    position: absolute;
     top: 0.5rem;
     right: 0.5rem;
 }
