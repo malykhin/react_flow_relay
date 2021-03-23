@@ -1,12 +1,16 @@
 // @flow
 
-import React, { useEffect } from "react";
-import { useQuery, useMutation } from "@apollo/client";
+import React, { useEffect, useCallback } from "react";
+import { usePreloadedQuery, useMutation } from "react-relay/hooks";
 import { GET_SKILLS, ADD_SKILL } from "./queries";
 import Section from "./Section";
 import AddSkillModal from "./AddSkillModal";
 import { useReducer } from "react";
 import update from "immutability-helper";
+
+type Props = {
+  preLoadedQuery: Object
+};
 
 type keyValueType = {
   id: string,
@@ -22,22 +26,6 @@ type fieldsType = {
   name: string,
   skills: {
     edges: Array<nodeType>
-  }
-};
-
-type dataType = {
-  frontEnd: fieldsType,
-  backEnd: fieldsType
-};
-
-type saveResponseType = {
-  data: {
-    introduceSkill: {
-      skill: keyValueType,
-      area: {
-        id: string
-      }
-    }
   }
 };
 
@@ -90,9 +78,9 @@ export function reducer(state: stateType, action: actionType): Object {
   }
 }
 
-export default function Skills(): React$Element<any> {
-  const { data, loading } = useQuery<dataType, Boolean>(GET_SKILLS);
-  const [addSkill, newData] = useMutation(ADD_SKILL);
+export default function Skills({ preLoadedQuery }: Props): React$Element<any> {
+  const data = usePreloadedQuery(GET_SKILLS, preLoadedQuery);
+  const [addSkill] = useMutation(ADD_SKILL);
 
   const [{ modalOpen, area, frontEnd, backEnd }, dispatch] = useReducer<
     stateType,
@@ -113,42 +101,45 @@ export default function Skills(): React$Element<any> {
   };
 
   const handleSave = async data => {
-    const response: saveResponseType = await addSkill({
-      variables: { areaId: area.areaId, skillName: data.skill }
+    addSkill({
+      variables: { areaId: area.areaId, skillName: data.skill },
+      onCompleted(data) {
+        const areaId = data.introduceSkill.area.id;
+        const updatedAreaKey = areaId === frontEnd.id ? "frontEnd" : "backEnd";
+        const newSkill = data.introduceSkill.skill;
+        dispatch({
+          type: ADD_SKILL_TO_AREA,
+          payload: { areaKey: updatedAreaKey, newSkill }
+        });
+        handleCloseModal();
+      }
     });
-    const areaId = response.data.introduceSkill.area.id;
-    const updatedAreaKey = areaId === frontEnd.id ? "frontEnd" : "backEnd";
-    const newSkill = response.data.introduceSkill.skill;
-    dispatch({
-      type: ADD_SKILL_TO_AREA,
-      payload: { areaKey: updatedAreaKey, newSkill }
-    });
-    if (!newData.loading) {
-      handleCloseModal();
-    }
   };
 
-  if (loading) return <h1>Loading...</h1>;
   return (
     <>
       <div className="flex-box">
         <Section
           sectionData={frontEnd}
-          listClickListener={() =>
-            dispatch({
-              type: SHOW_MODAL,
-              payload: { areaId: data.frontEnd.id, name: data.frontEnd.name }
-            })
-          }
+          listClickListener={useCallback(
+            () =>
+              dispatch({
+                type: SHOW_MODAL,
+                payload: { areaId: frontEnd.id, name: frontEnd.name }
+              }),
+            [dispatch, frontEnd]
+          )}
         />
         <Section
           sectionData={backEnd}
-          listClickListener={() =>
-            dispatch({
-              type: SHOW_MODAL,
-              payload: { areaId: data.backEnd.id, name: data.backEnd.name }
-            })
-          }
+          listClickListener={useCallback(
+            () =>
+              dispatch({
+                type: SHOW_MODAL,
+                payload: { areaId: backEnd.id, name: backEnd.name }
+              }),
+            [dispatch, backEnd]
+          )}
         />
       </div>
       <AddSkillModal

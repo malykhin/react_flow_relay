@@ -1,22 +1,38 @@
 // @flow
 
-import { gql } from "@apollo/client";
-import { CORE_SKILL_FIELDS } from "./fragments";
+import graphql from 'babel-plugin-relay/macro';
 
-const GET_SKILLS: Object = gql`
-  ${CORE_SKILL_FIELDS}
-  query GetSkills {
+const GET_SKILLS: Object = graphql`
+  query queriesGetSkillsQuery {
     frontEnd {
-      ...CoreSkillFields
+      id
+      name
+      skills {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
     }
     backEnd {
-      ...CoreSkillFields
+      id
+      name
+      skills {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
     }
   }
 `;
 
-const ADD_SKILL: Object = gql`
-  mutation AddSkill($areaId: ID!, $skillName: String!) {
+const ADD_SKILL: Object = graphql`
+  mutation queriesAddSkillMutation($areaId: ID!, $skillName: String!) {
     introduceSkill(input: { areaId: $areaId, skillName: $skillName }) {
       skill {
         id
