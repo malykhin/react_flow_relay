@@ -1,6 +1,6 @@
 // @flow
 
-import React from "react";
+/*import React from "react";
 import { render, waitFor, RenderResult } from "@testing-library/react";
 import { MockedProvider } from "@apollo/client/testing";
 
@@ -26,4 +26,4 @@ async function getRenderedResult(
   return renderResult;
 }
 
-export { getRenderedResult, hold };
+export { getRenderedResult, hold }; */
