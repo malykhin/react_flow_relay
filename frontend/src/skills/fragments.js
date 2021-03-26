@@ -1,7 +1,9 @@
 // @flow
 
-export const CORE_SKILL_FIELDS: Object = `
-  fragment CoreSkillFields on Area {
+import graphql from "babel-plugin-relay/macro";
+
+export const AREA_FRAGMENT: Object = graphql`
+  fragment fragmentsArea on Area {
     id
     name
     skills {

@@ -1,32 +1,14 @@
 // @flow
 
-import graphql from 'babel-plugin-relay/macro';
+import graphql from "babel-plugin-relay/macro";
 
 const GET_SKILLS: Object = graphql`
   query queriesGetSkillsQuery {
     frontEnd {
-      id
-      name
-      skills {
-        edges {
-          node {
-            id
-            name
-          }
-        }
-      }
+      ...fragmentsArea
     }
     backEnd {
-      id
-      name
-      skills {
-        edges {
-          node {
-            id
-            name
-          }
-        }
-      }
+      ...fragmentsArea
     }
   }
 `;

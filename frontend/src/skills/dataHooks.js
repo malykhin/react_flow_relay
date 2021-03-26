@@ -1,9 +1,10 @@
 // @flow
 
 import { useEffect, useReducer } from "react";
-import { usePreloadedQuery, useMutation } from "react-relay/hooks";
+import { useMutation, usePreloadedQuery, useFragment } from "react-relay/hooks";
 import update from "immutability-helper";
 import { GET_SKILLS, ADD_SKILL } from "./queries";
+import { AREA_FRAGMENT } from "./fragments";
 import type {
   DataStateType,
   ActionType,
@@ -37,6 +38,8 @@ function reducer(state: DataStateType, action: ActionType): Object {
 
 export function useDataService(preLoadedQuery: Object): DataHookReturnType {
   const data = usePreloadedQuery(GET_SKILLS, preLoadedQuery);
+  const frontEndData = useFragment(AREA_FRAGMENT, data.frontEnd);
+  const backEndData = useFragment(AREA_FRAGMENT, data.backEnd);
   const [addSkill, isLoading] = useMutation(ADD_SKILL);
 
   const [{ frontEnd, backEnd }, dispatch] = useReducer<DataStateType, Function>(
@@ -45,13 +48,13 @@ export function useDataService(preLoadedQuery: Object): DataHookReturnType {
   );
 
   useEffect(() => {
-    if (data && data.frontEnd && data.backEnd) {
+    if (frontEndData && backEndData) {
       dispatch({
         type: SET_DISPLAY_DATA,
-        payload: { frontEnd: data.frontEnd, backEnd: data.backEnd }
+        payload: { frontEnd: frontEndData, backEnd: backEndData }
       });
     }
-  }, [data]);
+  }, [data, frontEndData, backEndData]);
 
   function saveData(areaId: string, skillName: string): Promise<any> {
     return new Promise((resolve, reject) => {
