@@ -1,0 +1,13 @@
+.list-wrapper {
+    cursor: pointer;
+}
+
+.list-wrapper:hover {
+    background: lightblue;
+}
+
+button.close-icon {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+}

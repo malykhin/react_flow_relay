@@ -1,3 +1,23 @@
 .App {
   text-align: center;
 }
+
+.flex-box {
+  display: flex;
+}
+
+.flex-box>* {
+  margin: 0 1rem;
+}
+
+.align-center {
+  text-align: center;
+}
+
+div.flex-align-center {
+  justify-content: center;
+}
+
+button.fix-width-button {
+  max-width: 90px;
+}
