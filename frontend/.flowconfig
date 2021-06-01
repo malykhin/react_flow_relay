@@ -1,4 +1,12 @@
 [ignore]
+.*/node_modules/.*
+.*/src/reportWebVitals\.js
+.*/src/setupTests\.js
+.*/src/index\.js
+.*/src/utility/.*
+.*/src/__generated__/.*
+
+.*\.test\.js
 
 [include]
 
@@ -7,5 +15,5 @@
 [lints]
 
 [options]
-
+all=true
 [strict]
