@@ -1,3 +1,11 @@
 .App {
-  text-align: center;
+	text-align: center;
+	display: flex;
+}
+.frontend-skills {
+	align-items: flex-start;
+}
+
+.backend-skills {
+	align-items: flex-end;
 }
