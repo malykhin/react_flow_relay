@@ -1,49 +1,51 @@
-import * as React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useMutation, usePreloadedQuery, useFragment } from 'react-relay/hooks';
+import useDataManager from './../hooks/useDataManager';
 import SkillsContainer from './SkillsContainer';
-type Props = {
-	data: {
-		frontEnd: {
-			skills: {
-				edges: Array<{
-					node: { id: string, name: string },
-				}>,
-			},
-		},
-		backEnd: {
-			skills: {
-				edges: Array<{
-					node: { id: string, name: string },
-				}>,
-			},
-		},
-	},
-};
+import AddSkillModal from './AddSkillModal';
 
-function SkillsDashboard(props: Props): React.Node {
-	const [frontendSkills, setFrontendSkills] = useState([]);
-	const [backendSkills, setBackendSkills] = useState([]);
-
-	useEffect(() => {
-		if (props.data) {
-			setFrontendSkills(
-				props.data.frontEnd.skills.edges.map((skill) => skill.node)
-			);
-			setBackendSkills(
-				props.data.backEnd.skills.edges.map((skill) => skill.node)
-			);
-		}
-	}, [props?.data]);
+function SkillsDashboard({ preLoadedQuery }: Props): React.Node {
+	const [show, setShow] = useState(false);
+	const [areaID, setAreaID] = useState(null);
+	const [skill, setSkill] = useState('');
+	const [frontEnd, backEnd, saveData, isLoading] =
+		useDataManager(preLoadedQuery);
+	const showModal = (areaID) => {
+		setShow(true);
+		setAreaID(areaID);
+		console.log(areaID);
+	};
+	const closeModal = () => {
+		setShow(false);
+		setAreaID(null);
+	};
+	const onSaveChanges = () => {
+		saveData(areaID, skill);
+		closeModal();
+	};
 	return (
 		<>
 			<div className="frontend-skills">
-				<p>Frontend Skills</p>
-				<SkillsContainer skills={frontendSkills} />
+				<SkillsContainer
+					skills={frontEnd}
+					name="Frontend Skills"
+					addSkillHandler={() => showModal(frontEnd.id)}
+				/>
 			</div>
 			<div className="backend-skills">
-				<p>Backend Skills</p>
-				<SkillsContainer skills={backendSkills} />
+				<SkillsContainer
+					skills={backEnd}
+					name="Backend Skills"
+					addSkillHandler={() => showModal(backEnd.id)}
+				/>
 			</div>
+			<AddSkillModal
+				skill={skill}
+				setSkill={setSkill}
+				show={show}
+				handleClose={closeModal}
+				onSaveChanges={onSaveChanges}
+			/>
 		</>
 	);
 }

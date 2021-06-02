@@ -1,63 +1,25 @@
-import * as React from 'react';
-import './App.css';
+// @flow
+
+import React, { Suspense, useState, useEffect } from 'react';
+
 import SkillsDashboard from './components/SkillsDashboard';
-import fetchGraphQL from './utility/fetchGraphQL';
-const { useState, useEffect } = React;
+import { RelayEnvironmentProvider, loadQuery } from 'react-relay/hooks';
+import RelayEnvironment from './utility/RelayEnvironment';
+import { getSkillQuery } from './utility/query';
+import './App.css';
+
+const skillsPreLoadedQuery = loadQuery(RelayEnvironment, getSkillQuery, {});
 
 function App(props: {}): React.Node {
-	
-  const [data, setData] = useState({});
-
-  // When the component mounts we'll fetch a repository name
-  useEffect(() => {
-    let isMounted = true;
-    fetchGraphQL(`
-    query AppQuery {
-      frontEnd {
-        id
-        name
-        skills {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      }
-      backEnd {
-        id
-        name
-        skills {
-          edges {
-            node {
-              id
-              name
-            }
-          }
-        }
-      }
-    
-    }
-    `).then(response => {
-      if (!isMounted) {
-        return;
-      }
-      const data = response.data;
-      console.log(data)
-      setData(data);
-    }).catch(error => {
-      console.error(error);
-    });
-
-    return () => {
-      isMounted = false;
-    };
-  }, [fetchGraphQL]);
 	return (
-		<div className="App">
-		{data.frontEnd && (	<SkillsDashboard data={data} />)}
-		</div>
+		<RelayEnvironmentProvider environment={RelayEnvironment}>
+			<Suspense fallback={<h1>Loading...</h1>}>
+				<div className="App">
+					<header># To Do</header>
+					<SkillsDashboard preLoadedQuery={skillsPreLoadedQuery} />
+				</div>
+			</Suspense>
+		</RelayEnvironmentProvider>
 	);
 }
 
